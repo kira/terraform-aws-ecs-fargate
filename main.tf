@@ -222,6 +222,13 @@ resource "aws_ecs_service" "service" {
       container_name = var.container_name != "" ? var.container_name : var.name_prefix
     }
   }
+
+  dynamic "lifecycle" {
+    for_each = var.enable_application_autoscaling == true ? [1] : []
+    content {
+      ignore_changes = [desired_count]
+    }
+  }
 }
 
 # HACK: The workaround used in ecs/service does not work for some reason in this module, this fixes the following error:
